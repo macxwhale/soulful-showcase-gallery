@@ -13,4 +13,14 @@ export interface Project {
   techStack: string[];
   aiNarrative: string;
   notes: string;
+  is_published?: boolean;
+}
+
+export interface DatabaseProject {
+  id: string;
+  domain: string;
+  project_data: Project;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
 }
