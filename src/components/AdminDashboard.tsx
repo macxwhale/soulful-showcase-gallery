@@ -9,7 +9,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Send, Eye, EyeOff, Save, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { DatabaseProject, ProjectData } from '@/types/project';
+import { ProjectData } from '@/types/project';
+
+interface DatabaseProject {
+  id: string;
+  domain: string;
+  metadata: ProjectData;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+}
 
 const AdminDashboard = () => {
   const [domain, setDomain] = useState('');
@@ -29,7 +38,6 @@ const AdminDashboard = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      // Cast the data to our type since we know the structure
       return data as DatabaseProject[];
     }
   });
@@ -70,13 +78,13 @@ const AdminDashboard = () => {
       if (data.isUpdate && data.id) {
         const { error } = await supabase
           .from('projects')
-          .update({ project_data: data.projectData as any })
+          .update({ metadata: data.projectData })
           .eq('id', data.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('projects')
-          .insert({ domain: data.domain, project_data: data.projectData as any });
+          .insert({ domain: data.domain, metadata: data.projectData });
         if (error) throw error;
       }
     },
@@ -149,10 +157,9 @@ const AdminDashboard = () => {
   };
 
   const togglePublish = (project: DatabaseProject) => {
-    const projectData = project.project_data as ProjectData;
     const updatedData = {
-      ...projectData,
-      is_published: !projectData.is_published
+      ...project.metadata,
+      is_published: !project.metadata.is_published
     };
     
     saveMutation.mutate({
@@ -205,7 +212,7 @@ const AdminDashboard = () => {
         {/* Preview Panel */}
         {(previewData || editingProject) && (
           <ProjectPreview
-            data={previewData || (editingProject!.project_data as ProjectData)}
+            data={previewData || editingProject!.metadata}
             domain={domain || editingProject!.domain}
             onSave={handleSave}
             onCancel={() => {
@@ -228,54 +235,51 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {projects?.map((project) => {
-                  const projectData = project.project_data as ProjectData;
-                  return (
-                    <div
-                      key={project.id}
-                      className="border rounded-lg p-4 flex items-center justify-between"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-4 mb-2">
-                          <h3 className="font-semibold">{projectData.title}</h3>
-                          <Badge variant={projectData.is_published ? "default" : "secondary"}>
-                            {projectData.is_published ? "Published" : "Draft"}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">{project.domain}</p>
-                        <p className="text-sm text-gray-500">{projectData.description}</p>
+                {projects?.map((project) => (
+                  <div
+                    key={project.id}
+                    className="border rounded-lg p-4 flex items-center justify-between"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-4 mb-2">
+                        <h3 className="font-semibold">{project.metadata.title}</h3>
+                        <Badge variant={project.metadata.is_published ? "default" : "secondary"}>
+                          {project.metadata.is_published ? "Published" : "Draft"}
+                        </Badge>
                       </div>
-                      
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingProject(project)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => togglePublish(project)}
-                        >
-                          {projectData.is_published ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => deleteMutation.mutate(project.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
+                      <p className="text-sm text-gray-600 mb-2">{project.domain}</p>
+                      <p className="text-sm text-gray-500">{project.metadata.description}</p>
                     </div>
-                  );
-                })}
+                    
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingProject(project)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => togglePublish(project)}
+                      >
+                        {project.metadata.is_published ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => deleteMutation.mutate(project.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
                 
                 {projects?.length === 0 && (
                   <p className="text-center text-gray-500 py-8">

@@ -87,7 +87,7 @@ export type Database = {
           created_by: string | null
           domain: string
           id: string
-          project_data: Json
+          metadata: Json
           updated_at: string
         }
         Insert: {
@@ -95,7 +95,7 @@ export type Database = {
           created_by?: string | null
           domain: string
           id?: string
-          project_data?: Json
+          metadata?: Json
           updated_at?: string
         }
         Update: {
@@ -103,7 +103,7 @@ export type Database = {
           created_by?: string | null
           domain?: string
           id?: string
-          project_data?: Json
+          metadata?: Json
           updated_at?: string
         }
         Relationships: []

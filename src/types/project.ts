@@ -32,11 +32,11 @@ export interface ProjectData {
   is_published: boolean;
 }
 
-// Use the actual Supabase type for database operations
+// Simplified database structure with domain-based storage
 export interface DatabaseProject {
   id: string;
   domain: string;
-  project_data: any; // Use any to handle Json type from Supabase
+  metadata: ProjectData; // All project data stored as JSON
   created_at: string;
   updated_at: string;
   created_by?: string;
