@@ -9,23 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Send, Eye, EyeOff, Save, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { DatabaseProject } from '@/types/project';
-
-interface ProjectData {
-  title: string;
-  description: string;
-  category: string;
-  tags: string[];
-  techStack: string[];
-  aiNarrative: string;
-  logo: string;
-  previewImage: string;
-  featured: boolean;
-  notes: string;
-  url: string;
-  publishedDate: string;
-  is_published: boolean;
-}
+import { DatabaseProject, ProjectData } from '@/types/project';
 
 const AdminDashboard = () => {
   const [domain, setDomain] = useState('');
@@ -45,6 +29,7 @@ const AdminDashboard = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
+      // Cast the data to our type since we know the structure
       return data as DatabaseProject[];
     }
   });
@@ -85,13 +70,13 @@ const AdminDashboard = () => {
       if (data.isUpdate && data.id) {
         const { error } = await supabase
           .from('projects')
-          .update({ project_data: data.projectData as any })
+          .update({ project_data: data.projectData })
           .eq('id', data.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('projects')
-          .insert({ domain: data.domain, project_data: data.projectData as any });
+          .insert({ domain: data.domain, project_data: data.projectData });
         if (error) throw error;
       }
     },
