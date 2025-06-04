@@ -32,11 +32,11 @@ export interface ProjectData {
   is_published: boolean;
 }
 
-// Simplified database structure with domain-based storage
+// Updated database structure to properly handle JSON metadata
 export interface DatabaseProject {
   id: string;
   domain: string;
-  metadata: ProjectData; // All project data stored as JSON
+  metadata: ProjectData; // This will be JSON in the database but typed as ProjectData
   created_at: string;
   updated_at: string;
   created_by?: string;

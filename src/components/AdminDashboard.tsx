@@ -9,16 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Send, Eye, EyeOff, Save, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { ProjectData } from '@/types/project';
-
-interface DatabaseProject {
-  id: string;
-  domain: string;
-  metadata: ProjectData;
-  created_at: string;
-  updated_at: string;
-  created_by?: string;
-}
+import { ProjectData, DatabaseProject } from '@/types/project';
 
 const AdminDashboard = () => {
   const [domain, setDomain] = useState('');
@@ -38,7 +29,12 @@ const AdminDashboard = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as DatabaseProject[];
+      
+      // Transform the data to match our types, handling JSON metadata
+      return data.map(project => ({
+        ...project,
+        metadata: project.metadata as ProjectData
+      })) as DatabaseProject[];
     }
   });
 
@@ -78,13 +74,13 @@ const AdminDashboard = () => {
       if (data.isUpdate && data.id) {
         const { error } = await supabase
           .from('projects')
-          .update({ metadata: data.projectData })
+          .update({ metadata: data.projectData as any })
           .eq('id', data.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('projects')
-          .insert({ domain: data.domain, metadata: data.projectData });
+          .insert({ domain: data.domain, metadata: data.projectData as any });
         if (error) throw error;
       }
     },
