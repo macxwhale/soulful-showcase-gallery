@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Send, Eye, EyeOff, Save, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { DatabaseProject } from '@/types/project';
 
 interface ProjectData {
   title: string;
@@ -26,19 +27,11 @@ interface ProjectData {
   is_published: boolean;
 }
 
-interface Project {
-  id: string;
-  domain: string;
-  project_data: ProjectData;
-  created_at: string;
-  updated_at: string;
-}
-
 const AdminDashboard = () => {
   const [domain, setDomain] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [previewData, setPreviewData] = useState<ProjectData | null>(null);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editingProject, setEditingProject] = useState<DatabaseProject | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -52,7 +45,7 @@ const AdminDashboard = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as Project[];
+      return data as DatabaseProject[];
     }
   });
 
@@ -92,13 +85,13 @@ const AdminDashboard = () => {
       if (data.isUpdate && data.id) {
         const { error } = await supabase
           .from('projects')
-          .update({ project_data: data.projectData })
+          .update({ project_data: data.projectData as any })
           .eq('id', data.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('projects')
-          .insert({ domain: data.domain, project_data: data.projectData });
+          .insert({ domain: data.domain, project_data: data.projectData as any });
         if (error) throw error;
       }
     },
@@ -170,10 +163,11 @@ const AdminDashboard = () => {
     }
   };
 
-  const togglePublish = (project: Project) => {
+  const togglePublish = (project: DatabaseProject) => {
+    const projectData = project.project_data as ProjectData;
     const updatedData = {
-      ...project.project_data,
-      is_published: !project.project_data.is_published
+      ...projectData,
+      is_published: !projectData.is_published
     };
     
     saveMutation.mutate({
@@ -226,7 +220,7 @@ const AdminDashboard = () => {
         {/* Preview Panel */}
         {(previewData || editingProject) && (
           <ProjectPreview
-            data={previewData || editingProject!.project_data}
+            data={previewData || (editingProject!.project_data as ProjectData)}
             domain={domain || editingProject!.domain}
             onSave={handleSave}
             onCancel={() => {
@@ -249,51 +243,54 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {projects?.map((project) => (
-                  <div
-                    key={project.id}
-                    className="border rounded-lg p-4 flex items-center justify-between"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-2">
-                        <h3 className="font-semibold">{project.project_data.title}</h3>
-                        <Badge variant={project.project_data.is_published ? "default" : "secondary"}>
-                          {project.project_data.is_published ? "Published" : "Draft"}
-                        </Badge>
+                {projects?.map((project) => {
+                  const projectData = project.project_data as ProjectData;
+                  return (
+                    <div
+                      key={project.id}
+                      className="border rounded-lg p-4 flex items-center justify-between"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-4 mb-2">
+                          <h3 className="font-semibold">{projectData.title}</h3>
+                          <Badge variant={projectData.is_published ? "default" : "secondary"}>
+                            {projectData.is_published ? "Published" : "Draft"}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-2">{project.domain}</p>
+                        <p className="text-sm text-gray-500">{projectData.description}</p>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">{project.domain}</p>
-                      <p className="text-sm text-gray-500">{project.project_data.description}</p>
+                      
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingProject(project)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => togglePublish(project)}
+                        >
+                          {projectData.is_published ? (
+                            <EyeOff className="w-4 h-4" />
+                          ) : (
+                            <Eye className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => deleteMutation.mutate(project.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
-                    
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setEditingProject(project)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => togglePublish(project)}
-                      >
-                        {project.project_data.is_published ? (
-                          <EyeOff className="w-4 h-4" />
-                        ) : (
-                          <Eye className="w-4 h-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => deleteMutation.mutate(project.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
                 
                 {projects?.length === 0 && (
                   <p className="text-center text-gray-500 py-8">
