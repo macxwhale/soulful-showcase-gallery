@@ -70,13 +70,13 @@ const AdminDashboard = () => {
       if (data.isUpdate && data.id) {
         const { error } = await supabase
           .from('projects')
-          .update({ project_data: data.projectData })
+          .update({ project_data: data.projectData as any })
           .eq('id', data.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('projects')
-          .insert({ domain: data.domain, project_data: data.projectData });
+          .insert({ domain: data.domain, project_data: data.projectData as any });
         if (error) throw error;
       }
     },
