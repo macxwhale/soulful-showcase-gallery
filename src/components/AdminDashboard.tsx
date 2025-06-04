@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,7 +32,7 @@ const AdminDashboard = () => {
       // Transform the data to match our types, handling JSON metadata
       return data.map(project => ({
         ...project,
-        metadata: project.metadata as ProjectData
+        metadata: project.metadata as unknown as ProjectData
       })) as DatabaseProject[];
     }
   });
