@@ -24,7 +24,7 @@ export const usePublishedProjects = () => {
       // Transform the raw database data to match our types
       const typedProjects: DatabaseProject[] = data.map(project => ({
         ...project,
-        metadata: project.metadata as ProjectData
+        metadata: project.metadata as unknown as ProjectData
       }));
       
       // Filter published projects and transform to frontend Project format
