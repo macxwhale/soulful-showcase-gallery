@@ -103,3 +103,108 @@ export const captureHeroSection = async (options: ScreenshotOptions = {}) => {
     ...options
   });
 };
+
+// New function to capture website URL as screenshot
+export const captureWebsiteScreenshot = async (
+  url: string, 
+  options: ScreenshotOptions = {}
+): Promise<string> => {
+  const {
+    width = 1200,
+    height = 630,
+    format = 'png',
+    quality = 0.9
+  } = options;
+
+  try {
+    console.log(`📸 Capturing screenshot for: ${url}`);
+    
+    // Create iframe to load the website
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.top = '-9999px';
+    iframe.style.left = '-9999px';
+    iframe.style.width = `${width}px`;
+    iframe.style.height = `${height}px`;
+    iframe.style.border = 'none';
+    iframe.style.zIndex = '-1';
+    
+    document.body.appendChild(iframe);
+
+    // Load the website in iframe
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        document.body.removeChild(iframe);
+        reject(new Error('Screenshot capture timeout'));
+      }, 10000);
+
+      iframe.onload = async () => {
+        try {
+          clearTimeout(timeout);
+          
+          // Wait a bit for content to render
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          if (window.html2canvas && iframe.contentDocument) {
+            const canvas = await window.html2canvas(iframe.contentDocument.body, {
+              width,
+              height,
+              useCORS: true,
+              allowTaint: true,
+              scale: 1
+            });
+            
+            document.body.removeChild(iframe);
+            resolve(canvas.toDataURL(`image/${format}`, quality));
+          } else {
+            // Fallback: create a simple preview image
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            if (!ctx) {
+              throw new Error('Could not get canvas context');
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            gradient.addColorStop(0, '#1e293b');
+            gradient.addColorStop(1, '#475569');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Add website URL
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px system-ui';
+            ctx.textAlign = 'center';
+            ctx.fillText('Website Preview', width / 2, height / 2 - 40);
+            
+            ctx.font = '24px system-ui';
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillText(url, width / 2, height / 2 + 20);
+            
+            document.body.removeChild(iframe);
+            resolve(canvas.toDataURL(`image/${format}`, quality));
+          }
+        } catch (error) {
+          document.body.removeChild(iframe);
+          reject(error);
+        }
+      };
+
+      iframe.onerror = () => {
+        clearTimeout(timeout);
+        document.body.removeChild(iframe);
+        reject(new Error('Failed to load website'));
+      };
+
+      iframe.src = url.startsWith('http') ? url : `https://${url}`;
+    });
+    
+  } catch (error) {
+    console.error('Website screenshot capture failed:', error);
+    throw error;
+  }
+};
