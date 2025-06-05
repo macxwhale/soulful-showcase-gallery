@@ -1,7 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { DatabaseProject, Project } from '@/types/project';
+import { DatabaseProject, Project, ProjectData } from '@/types/project';
 
 export const usePublishedProjects = () => {
   return useQuery({
@@ -21,8 +21,14 @@ export const usePublishedProjects = () => {
       
       console.log('Fetched projects:', data);
       
-      // Transform database projects to frontend Project format and filter published ones
-      const publishedProjects = data
+      // Transform the raw database data to match our types
+      const typedProjects: DatabaseProject[] = data.map(project => ({
+        ...project,
+        metadata: project.metadata as ProjectData
+      }));
+      
+      // Filter published projects and transform to frontend Project format
+      const publishedProjects = typedProjects
         .filter((project: DatabaseProject) => project.metadata.is_published)
         .map((project: DatabaseProject): Project => ({
           id: project.id,
