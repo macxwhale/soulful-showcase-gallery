@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +7,7 @@ import { useProjectMutations } from '@/hooks/useProjectMutations';
 import WebsiteAnalysisForm from './admin/WebsiteAnalysisForm';
 import ProjectPreview from './admin/ProjectPreview';
 import ProjectsList from './admin/ProjectsList';
+import ScreenshotCapture from './admin/ScreenshotCapture';
 
 const AdminDashboard = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -139,6 +139,11 @@ const AdminDashboard = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
           <p className="text-gray-600">Manage and curate your project portfolio</p>
+        </div>
+        
+        {/* Add Screenshot Capture Section */}
+        <div className="mb-8">
+          <ScreenshotCapture />
         </div>
         
         <WebsiteAnalysisForm 
