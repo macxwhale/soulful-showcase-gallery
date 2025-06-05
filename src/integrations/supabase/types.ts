@@ -9,51 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      generated_projects: {
-        Row: {
-          analysis_data: Json | null
-          created_at: string
-          domain: string
-          error_message: string | null
-          id: string
-          screenshot: string | null
-          status: string | null
-          summary: string | null
-          tags: string[] | null
-          title: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          analysis_data?: Json | null
-          created_at?: string
-          domain: string
-          error_message?: string | null
-          id?: string
-          screenshot?: string | null
-          status?: string | null
-          summary?: string | null
-          tags?: string[] | null
-          title: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          analysis_data?: Json | null
-          created_at?: string
-          domain?: string
-          error_message?: string | null
-          id?: string
-          screenshot?: string | null
-          status?: string | null
-          summary?: string | null
-          tags?: string[] | null
-          title?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           avatar_url: string | null

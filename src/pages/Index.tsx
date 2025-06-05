@@ -15,6 +15,8 @@ const Index = () => {
   // Fetch published projects from database
   const { data: projects = [], isLoading, error, refetch } = usePublishedProjects();
 
+  console.log('🏠 Homepage - Total published projects:', projects.length);
+
   // Generate categories dynamically from actual data
   const categories = ["All", ...Array.from(new Set(projects.map(project => project.category)))];
   
@@ -126,14 +128,21 @@ const Index = () => {
             <div className="text-center py-12">
               <div className="text-gray-400 text-6xl mb-4">🚀</div>
               <p className="text-gray-500 text-lg mb-2">
-                {projects.length === 0 ? "No projects published yet" : `No projects in "${selectedCategory}" category`}
+                {projects.length === 0 ? "No published projects found" : `No projects in "${selectedCategory}" category`}
               </p>
-              <p className="text-gray-400">
+              <p className="text-gray-400 mb-4">
                 {projects.length === 0 
-                  ? "Check back soon for amazing projects!" 
+                  ? "Projects need to be published from the admin panel to appear here." 
                   : "Try selecting a different category to see more projects."
                 }
               </p>
+              {projects.length === 0 && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg max-w-md mx-auto">
+                  <p className="text-blue-700 text-sm">
+                    💡 <strong>Admin tip:</strong> Visit the <a href="/admin" className="underline hover:text-blue-800">admin panel</a> to publish projects and make them visible on the homepage.
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>

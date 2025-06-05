@@ -7,7 +7,7 @@ export const usePublishedProjects = () => {
   return useQuery({
     queryKey: ['published-projects'],
     queryFn: async () => {
-      console.log('Fetching published projects from database...');
+      console.log('🔍 Fetching published projects from database...');
       
       const { data, error } = await supabase
         .from('projects')
@@ -15,11 +15,12 @@ export const usePublishedProjects = () => {
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error('Error fetching published projects:', error);
+        console.error('❌ Error fetching published projects:', error);
         throw error;
       }
       
-      console.log('Fetched projects:', data);
+      console.log('📊 Raw projects fetched:', data.length);
+      console.log('📋 Raw project data:', data);
       
       // Transform the raw database data to match our types
       const typedProjects: DatabaseProject[] = data.map(project => ({
@@ -27,9 +28,15 @@ export const usePublishedProjects = () => {
         metadata: project.metadata as unknown as ProjectData
       }));
       
+      console.log('🔄 Typed projects:', typedProjects.length);
+      
       // Filter published projects and transform to frontend Project format
       const publishedProjects = typedProjects
-        .filter((project: DatabaseProject) => project.metadata.is_published)
+        .filter((project: DatabaseProject) => {
+          const isPublished = project.metadata.is_published;
+          console.log(`📝 Project "${project.metadata.title}" - Published: ${isPublished}`);
+          return isPublished;
+        })
         .map((project: DatabaseProject): Project => ({
           id: project.id,
           title: project.metadata.title,
@@ -47,7 +54,9 @@ export const usePublishedProjects = () => {
           is_published: project.metadata.is_published
         }));
       
-      console.log('Transformed published projects:', publishedProjects);
+      console.log('✨ Final published projects:', publishedProjects.length);
+      console.log('🎯 Published projects data:', publishedProjects);
+      
       return publishedProjects;
     },
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
