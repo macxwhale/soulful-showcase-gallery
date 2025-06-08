@@ -14,6 +14,9 @@
     <meta name="language" content="English" />
     <meta name="author" content="bunisystems.com" />
     
+    <!-- Google Site Verification (will be added dynamically by Analytics component) -->
+    <!-- <meta name="google-site-verification" content="your-verification-code" /> -->
+    
     <!-- Canonical URL -->
     <link rel="canonical" href="https://portfolio.bunisystems.com/" />
     
@@ -40,7 +43,7 @@
     <meta name="msapplication-TileColor" content="#f43f5e" />
     <meta name="application-name" content="bunisystems Portfolio" />
     
-    <!-- Structured Data -->
+    <!-- Enhanced Structured Data for better Google understanding -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -61,6 +64,20 @@
         "@type": "ContactPoint",
         "contactType": "customer service",
         "url": "https://bunisystems.com/contact"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Digital Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Web Development",
+              "description": "Custom web application development and digital solutions"
+            }
+          }
+        ]
       }
     }
     </script>
@@ -76,6 +93,11 @@
         "@type": "Organization",
         "name": "bunisystems",
         "url": "https://bunisystems.com"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://portfolio.bunisystems.com/?search={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
     }
     </script>
@@ -86,6 +108,8 @@
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
   </head>
 
   <body>
