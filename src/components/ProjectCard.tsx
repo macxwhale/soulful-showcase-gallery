@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { ExternalLink, Calendar, Users, TrendingUp } from "lucide-react";
 import { Project } from "@/types/project";
 
 interface ProjectCardProps {
@@ -13,14 +14,14 @@ const ProjectCard = ({ project, onClick, featured = false }: ProjectCardProps) =
 
   return (
     <div 
-      className={`group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 ${
-        featured ? "md:col-span-1" : ""
+      className={`group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:scale-[1.02] ${
+        featured ? "md:col-span-1 border-2 border-gradient-to-r from-rose-200 to-pink-200" : ""
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(project)}
     >
-      {/* Image Container */}
+      {/* Image Container with Professional Overlay */}
       <div className="relative overflow-hidden aspect-video">
         <img 
           src={project.previewImage} 
@@ -30,75 +31,121 @@ const ProjectCard = ({ project, onClick, featured = false }: ProjectCardProps) =
           }`}
         />
         
-        {/* Overlay */}
-        <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity duration-300 ${
-          isHovered ? "opacity-100" : "opacity-70"
+        {/* Professional Gradient Overlay */}
+        <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity duration-300 ${
+          isHovered ? "opacity-100" : "opacity-60"
         }`}></div>
         
-        {/* Logo */}
-        <div className="absolute top-4 left-4 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center text-2xl shadow-lg">
+        {/* Company Logo */}
+        <div className="absolute top-4 left-4 w-12 h-12 bg-white/95 backdrop-blur-sm rounded-xl flex items-center justify-center text-2xl shadow-lg border border-white/20">
           {project.logo}
         </div>
         
         {/* Featured Badge */}
         {featured && (
-          <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-sm font-semibold rounded-full">
-            Featured
+          <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-sm font-semibold rounded-full shadow-lg">
+            ⭐ Featured
           </div>
         )}
         
-        {/* Category */}
-        <div className="absolute bottom-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full border border-white/30">
+        {/* Client Type Badge */}
+        <div className="absolute bottom-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-slate-700 text-sm font-medium rounded-full border border-white/30 shadow-sm">
           {project.category}
         </div>
+
+        {/* Quick Action */}
+        <div className={`absolute bottom-4 right-4 transition-all duration-300 ${
+          isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
+        }`}>
+          <a 
+            href={project.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center px-3 py-2 bg-white/90 backdrop-blur-sm text-slate-700 rounded-full hover:bg-white transition-all duration-300 shadow-lg"
+          >
+            <ExternalLink className="w-4 h-4 mr-1" />
+            <span className="text-sm font-medium">Visit</span>
+          </a>
+        </div>
       </div>
       
-      {/* Content */}
+      {/* Enhanced Content Section */}
       <div className="p-6">
-        <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-rose-600 transition-colors duration-300">
-          {project.title}
-        </h3>
-        
-        <p className="text-slate-600 mb-4 line-clamp-3 leading-relaxed">
-          {project.description}
-        </p>
-        
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {project.tags.slice(0, 3).map((tag, index) => (
-            <span 
-              key={index}
-              className="px-3 py-1 bg-slate-100 text-slate-600 text-sm rounded-full hover:bg-rose-100 hover:text-rose-700 transition-colors duration-300"
-            >
-              {tag}
-            </span>
-          ))}
-          {project.tags.length > 3 && (
-            <span className="px-3 py-1 bg-slate-100 text-slate-500 text-sm rounded-full">
-              +{project.tags.length - 3} more
-            </span>
-          )}
-        </div>
-        
-        {/* Date */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-slate-500">
+        {/* Project Title & Type */}
+        <div className="mb-4">
+          <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-rose-600 transition-colors duration-300">
+            {project.title}
+          </h3>
+          <div className="flex items-center text-sm text-slate-500 mb-3">
+            <Calendar className="w-4 h-4 mr-1" />
             {new Date(project.publishedDate).toLocaleDateString('en-US', {
               year: 'numeric',
-              month: 'long',
-              day: 'numeric'
+              month: 'long'
             })}
+          </div>
+        </div>
+        
+        {/* Project Description - Case Study Style */}
+        <div className="mb-4">
+          <p className="text-slate-600 mb-3 line-clamp-3 leading-relaxed">
+            {project.description}
+          </p>
+        </div>
+
+        {/* Key Metrics/Results Placeholder */}
+        <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
+          <div className="text-center">
+            <div className="flex items-center justify-center text-green-600 mb-1">
+              <TrendingUp className="w-4 h-4 mr-1" />
+              <span className="text-sm font-semibold">Success</span>
+            </div>
+            <div className="text-xs text-slate-500">Delivered</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center text-blue-600 mb-1">
+              <Users className="w-4 h-4 mr-1" />
+              <span className="text-sm font-semibold">Client</span>
+            </div>
+            <div className="text-xs text-slate-500">Satisfied</div>
+          </div>
+        </div>
+        
+        {/* Technology Stack */}
+        <div className="mb-4">
+          <div className="flex flex-wrap gap-2">
+            {project.tags.slice(0, 3).map((tag, index) => (
+              <span 
+                key={index}
+                className="px-3 py-1 bg-gradient-to-r from-rose-50 to-pink-50 text-rose-700 text-sm rounded-full font-medium border border-rose-200 hover:from-rose-100 hover:to-pink-100 transition-colors duration-300"
+              >
+                {tag}
+              </span>
+            ))}
+            {project.tags.length > 3 && (
+              <span className="px-3 py-1 bg-slate-100 text-slate-500 text-sm rounded-full">
+                +{project.tags.length - 3} more
+              </span>
+            )}
+          </div>
+        </div>
+        
+        {/* Call to Action */}
+        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+          <span className="text-sm text-slate-500 font-medium">
+            bunisystems.com
           </span>
           
-          <span className="text-rose-500 font-medium group-hover:text-rose-600 transition-colors duration-300">
-            View Details →
+          <span className="text-rose-500 font-semibold group-hover:text-rose-600 transition-colors duration-300 flex items-center">
+            View Case Study 
+            <span className={`ml-1 transition-transform duration-300 ${isHovered ? "translate-x-1" : ""}`}>→</span>
           </span>
         </div>
       </div>
       
-      {/* Hover Effect Border */}
-      <div className={`absolute inset-0 border-2 border-transparent rounded-2xl transition-all duration-300 ${
-        isHovered ? "border-gradient-to-r from-rose-400 to-pink-400" : ""
+      {/* Professional Border Effect */}
+      <div className={`absolute inset-0 border-2 rounded-2xl transition-all duration-300 pointer-events-none ${
+        isHovered ? "border-rose-300 shadow-lg" : "border-transparent"
       }`}></div>
     </div>
   );
