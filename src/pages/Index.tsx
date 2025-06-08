@@ -6,6 +6,7 @@ import ProjectCard from "@/components/ProjectCard";
 import ProjectModal from "@/components/ProjectModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ErrorDisplay from "@/components/ErrorDisplay";
+import SEOHead from "@/components/SEOHead";
 import { Project } from "@/types/project";
 import { usePublishedProjects } from "@/hooks/usePublishedProjects";
 
@@ -31,6 +32,7 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+        <SEOHead />
         <Navigation />
         <HeroSection />
         <LoadingSpinner 
@@ -45,6 +47,7 @@ const Index = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+        <SEOHead />
         <Navigation />
         <HeroSection />
         <ErrorDisplay 
@@ -58,6 +61,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <SEOHead />
       <Navigation />
       <HeroSection />
       
