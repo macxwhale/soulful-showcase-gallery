@@ -7,26 +7,91 @@ import ProjectModal from "@/components/ProjectModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ErrorDisplay from "@/components/ErrorDisplay";
 import SEOHead from "@/components/SEOHead";
+import SearchAndFilter from "@/components/SearchAndFilter";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import PerformanceMetrics from "@/components/PerformanceMetrics";
 import { Project } from "@/types/project";
 import { usePublishedProjects } from "@/hooks/usePublishedProjects";
+
+interface FilterOptions {
+  category: string;
+  technology: string;
+  sortBy: string;
+}
 
 const Index = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filters, setFilters] = useState<FilterOptions>({
+    category: "All",
+    technology: "All",
+    sortBy: "newest"
+  });
 
   // Fetch published projects from database
   const { data: projects = [], isLoading, error, refetch } = usePublishedProjects();
 
   console.log('🏠 Homepage - Total published projects:', projects.length);
 
-  // Generate categories dynamically from actual data
+  // Generate categories and technologies dynamically from actual data
   const categories = ["All", ...Array.from(new Set(projects.map(project => project.category)))];
-  
-  const filteredProjects = selectedCategory === "All" 
-    ? projects 
-    : projects.filter(project => project.category === selectedCategory);
+  const allTechnologies = projects.flatMap(project => project.tags);
+  const technologies = ["All", ...Array.from(new Set(allTechnologies))];
+
+  // Apply search and filters
+  const filteredProjects = projects.filter(project => {
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const searchMatch = 
+        project.title.toLowerCase().includes(query) ||
+        project.description.toLowerCase().includes(query) ||
+        project.tags.some(tag => tag.toLowerCase().includes(query)) ||
+        project.category.toLowerCase().includes(query);
+      
+      if (!searchMatch) return false;
+    }
+
+    // Category filter
+    if (filters.category !== "All" && project.category !== filters.category) {
+      return false;
+    }
+
+    // Technology filter
+    if (filters.technology !== "All" && !project.tags.includes(filters.technology)) {
+      return false;
+    }
+
+    return true;
+  }).sort((a, b) => {
+    // Sort filter
+    switch (filters.sortBy) {
+      case "oldest":
+        return new Date(a.publishedDate).getTime() - new Date(b.publishedDate).getTime();
+      case "alphabetical":
+        return a.title.localeCompare(b.title);
+      case "featured":
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
+      case "newest":
+      default:
+        return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
+    }
+  });
 
   const featuredProjects = projects.filter(project => project.featured);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleFilter = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
+    // Update selected category for backward compatibility
+    setSelectedCategory(newFilters.category);
+  };
 
   // Handle loading state
   if (isLoading) {
@@ -65,6 +130,9 @@ const Index = () => {
       <Navigation />
       <HeroSection />
       
+      {/* Performance Metrics Section */}
+      <PerformanceMetrics />
+      
       {/* Featured Case Studies Section */}
       {featuredProjects.length > 0 && (
         <section className="px-6 py-20 max-w-7xl mx-auto">
@@ -94,6 +162,9 @@ const Index = () => {
         </section>
       )}
 
+      {/* Testimonials Section */}
+      <TestimonialsSection />
+
       {/* All Projects Section */}
       <section id="projects" className="px-6 py-20 bg-white">
         <div className="max-w-7xl mx-auto">
@@ -108,53 +179,48 @@ const Index = () => {
               Browse our complete collection of successful client projects. Each case study demonstrates 
               our expertise in delivering results-driven digital solutions.
             </p>
-            
-            {/* Enhanced Category Filter */}
-            {categories.length > 1 && (
-              <div className="flex flex-wrap justify-center gap-3">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-6 py-3 rounded-full transition-all duration-300 font-medium ${
-                      selectedCategory === category
-                        ? "bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg transform scale-105"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
-                    }`}
-                  >
-                    {category}
-                    {category !== "All" && (
-                      <span className="ml-2 text-xs opacity-75">
-                        ({projects.filter(p => p.category === category).length})
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
+
+          {/* Enhanced Search and Filter */}
+          <SearchAndFilter
+            onSearch={handleSearch}
+            onFilter={handleFilter}
+            categories={categories.filter(cat => cat !== "All")}
+            technologies={technologies.filter(tech => tech !== "All")}
+          />
           
           {/* Projects Grid */}
           {filteredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProjects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onClick={setSelectedProject}
-                />
-              ))}
-            </div>
+            <>
+              <div className="mb-6 text-center">
+                <p className="text-slate-600">
+                  Showing {filteredProjects.length} of {projects.length} projects
+                  {searchQuery && ` for "${searchQuery}"`}
+                  {filters.category !== "All" && ` in ${filters.category}`}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProjects.map((project) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    onClick={setSelectedProject}
+                  />
+                ))}
+              </div>
+            </>
           ) : (
             <div className="text-center py-16">
-              <div className="text-gray-400 text-6xl mb-4">🚀</div>
+              <div className="text-gray-400 text-6xl mb-4">🔍</div>
               <p className="text-gray-500 text-lg mb-2">
-                {projects.length === 0 ? "Portfolio coming soon" : `No projects in "${selectedCategory}" category`}
+                {projects.length === 0 ? "Portfolio coming soon" : "No projects found"}
               </p>
               <p className="text-gray-400 mb-6">
                 {projects.length === 0 
                   ? "We're currently updating our portfolio with our latest client success stories." 
-                  : "Try selecting a different category to explore more of our work."
+                  : searchQuery 
+                    ? `Try adjusting your search or filters to find what you're looking for.`
+                    : "Try selecting different filters to explore more of our work."
                 }
               </p>
               {projects.length === 0 && (
