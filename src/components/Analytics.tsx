@@ -1,19 +1,37 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AnalyticsProps {
-  gaId?: string;
   gscVerification?: string;
 }
 
 const Analytics = ({ 
-  gaId = "G-XXXXXXXXXX", // Replace with your actual GA4 Measurement ID
   gscVerification = "your-google-search-console-verification-code" // Replace with your GSC verification code
 }: AnalyticsProps) => {
+  const [gaId, setGaId] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // Fetch GA Measurement ID from Supabase secrets
+    const fetchGAId = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-ga-id');
+        if (error) {
+          console.error('Error fetching GA ID:', error);
+          return;
+        }
+        setGaId(data?.gaId);
+      } catch (error) {
+        console.error('Error fetching GA ID:', error);
+      }
+    };
+
+    fetchGAId();
+  }, []);
   
   useEffect(() => {
     // Google Analytics 4 (GA4) Setup
-    if (gaId && gaId !== "G-XXXXXXXXXX") {
+    if (gaId) {
       // Load Google Analytics script
       const script1 = document.createElement('script');
       script1.async = true;
@@ -52,7 +70,7 @@ const Analytics = ({
   // Function to track custom events
   useEffect(() => {
     // Add gtag to window for custom event tracking
-    if (typeof window !== 'undefined' && gaId && gaId !== "G-XXXXXXXXXX") {
+    if (typeof window !== 'undefined' && gaId) {
       (window as any).gtag = (window as any).gtag || function() {
         ((window as any).dataLayer = (window as any).dataLayer || []).push(arguments);
       };

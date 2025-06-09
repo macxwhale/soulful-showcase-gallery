@@ -15,7 +15,6 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Analytics 
-        gaId="G-XXXXXXXXXX" 
         gscVerification="your-google-search-console-verification-code"
       />
       <Toaster />
