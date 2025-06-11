@@ -8,8 +8,6 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ErrorDisplay from "@/components/ErrorDisplay";
 import SEOHead from "@/components/SEOHead";
 import SearchAndFilter from "@/components/SearchAndFilter";
-import TestimonialsSection from "@/components/TestimonialsSection";
-import PerformanceMetrics from "@/components/PerformanceMetrics";
 import { Project } from "@/types/project";
 import { usePublishedProjects } from "@/hooks/usePublishedProjects";
 
@@ -130,9 +128,6 @@ const Index = () => {
       <Navigation />
       <HeroSection />
       
-      {/* Performance Metrics Section */}
-      <PerformanceMetrics />
-      
       {/* Featured Case Studies Section */}
       {featuredProjects.length > 0 && (
         <section className="px-6 py-20 max-w-7xl mx-auto">
@@ -161,9 +156,6 @@ const Index = () => {
           </div>
         </section>
       )}
-
-      {/* Testimonials Section */}
-      <TestimonialsSection />
 
       {/* All Projects Section */}
       <section id="projects" className="px-6 py-20 bg-white">
