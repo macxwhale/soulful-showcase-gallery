@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Project } from "@/types/project";
 import ProjectModalHeader from "@/components/ProjectModalHeader";
@@ -84,16 +83,15 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
             )}
             
             {activeTab === "results" && (
-              <div className="space-y-8">
-                {project.results && project.results.length > 0 ? (
-                  <ProjectResults results={project.results} />
-                ) : (
-                  <div className="text-center py-16">
-                    <div className="text-gray-400 text-6xl mb-4">📊</div>
-                    <p className="text-gray-500 text-lg">Project results coming soon</p>
-                  </div>
-                )}
-              </div>
+              <ProjectResults 
+                results={project.results}
+                businessImpact={project.businessImpact}
+                userFeedback={project.userFeedback}
+                projectAwards={project.projectAwards}
+                lessonsLearned={project.lessonsLearned}
+                usageStatistics={project.usageStatistics}
+                stakeholderFeedback={project.stakeholderFeedback}
+              />
             )}
             
             {activeTab === "team" && (

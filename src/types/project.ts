@@ -1,4 +1,3 @@
-
 export interface Project {
   id: string;
   title: string;
@@ -31,8 +30,6 @@ export interface Project {
   keyFeatures?: string[];
   userJourney?: string;
   designSystem?: DesignSystemInfo;
-  
-  // Enhanced challenge/problem documentation
   challengeDetails?: ChallengeDetails;
 }
 
@@ -82,6 +79,57 @@ export interface ProjectResult {
   value: string;
   description?: string;
   improvement?: string;
+  category?: 'business' | 'user' | 'technical' | 'design';
+  timeframe?: string;
+  methodology?: string;
+}
+
+export interface BusinessImpact {
+  revenue?: {
+    increase?: string;
+    value?: string;
+    timeframe?: string;
+  };
+  conversion?: {
+    before?: string;
+    after?: string;
+    improvement?: string;
+  };
+  engagement?: {
+    metric: string;
+    improvement: string;
+    details?: string;
+  }[];
+  cost?: {
+    savings?: string;
+    efficiency?: string;
+  };
+  roi?: string;
+}
+
+export interface UserFeedback {
+  type: 'testimonial' | 'review' | 'survey' | 'interview';
+  quote: string;
+  author?: string;
+  role?: string;
+  rating?: number;
+  source?: string;
+  date?: string;
+}
+
+export interface ProjectAwards {
+  title: string;
+  organization: string;
+  year: string;
+  category?: string;
+  link?: string;
+}
+
+export interface LessonsLearned {
+  challenge: string;
+  solution: string;
+  outcome: string;
+  application?: string;
 }
 
 export interface TeamMember {
@@ -144,6 +192,23 @@ export interface ProjectData {
   userJourney?: string;
   designSystem?: DesignSystemInfo;
   challengeDetails?: ChallengeDetails;
+  businessImpact?: BusinessImpact;
+  userFeedback?: UserFeedback[];
+  projectAwards?: ProjectAwards[];
+  lessonsLearned?: LessonsLearned[];
+  usageStatistics?: {
+    activeUsers?: string;
+    sessions?: string;
+    retention?: string;
+    satisfaction?: string;
+  };
+  stakeholderFeedback?: {
+    quote: string;
+    author: string;
+    position: string;
+    company: string;
+    context?: string;
+  }[];
 }
 
 // Updated database structure to properly handle JSON metadata
