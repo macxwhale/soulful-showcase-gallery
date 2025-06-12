@@ -31,6 +31,42 @@ export interface Project {
   keyFeatures?: string[];
   userJourney?: string;
   designSystem?: DesignSystemInfo;
+  
+  // Enhanced challenge/problem documentation
+  challengeDetails?: ChallengeDetails;
+}
+
+export interface ChallengeDetails {
+  businessProblem: string;
+  userProblem: string;
+  targetUsers: TargetUser[];
+  painPoints: string[];
+  keyRequirements: string[];
+  constraints: ProjectConstraint[];
+  successCriteria: string[];
+  stakeholderGoals: StakeholderGoal[];
+  competitiveContext?: string;
+  businessImpact?: string;
+}
+
+export interface TargetUser {
+  persona: string;
+  demographics: string;
+  goals: string[];
+  frustrations: string[];
+  context: string;
+}
+
+export interface ProjectConstraint {
+  type: 'technical' | 'business' | 'design' | 'regulatory' | 'timeline' | 'budget';
+  description: string;
+  impact: string;
+}
+
+export interface StakeholderGoal {
+  stakeholder: string;
+  goals: string[];
+  priority: 'high' | 'medium' | 'low';
 }
 
 export interface DesignProcessStep {
@@ -107,6 +143,7 @@ export interface ProjectData {
   keyFeatures?: string[];
   userJourney?: string;
   designSystem?: DesignSystemInfo;
+  challengeDetails?: ChallengeDetails;
 }
 
 // Updated database structure to properly handle JSON metadata

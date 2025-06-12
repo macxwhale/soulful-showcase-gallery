@@ -7,6 +7,7 @@ import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import DesignProcessTimeline from "@/components/DesignProcessTimeline";
 import ProjectResults from "@/components/ProjectResults";
 import TeamCredits from "@/components/TeamCredits";
+import ChallengeSection from "@/components/ChallengeSection";
 
 interface ProjectModalProps {
   project: Project;
@@ -14,10 +15,11 @@ interface ProjectModalProps {
 }
 
 const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
-  const [activeTab, setActiveTab] = useState<"overview" | "process" | "results" | "team">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "challenge" | "process" | "results" | "team">("overview");
 
   const tabs = [
     { key: "overview", label: "Overview" },
+    { key: "challenge", label: "Challenge & Problem" },
     { key: "process", label: "Design Process" },
     { key: "results", label: "Results & Impact" },
     { key: "team", label: "Team & Credits" }
@@ -240,6 +242,19 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                         </div>
                       </div>
                     </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {activeTab === "challenge" && (
+              <div className="space-y-8">
+                {project.challengeDetails ? (
+                  <ChallengeSection challengeDetails={project.challengeDetails} />
+                ) : (
+                  <div className="text-center py-16">
+                    <div className="text-gray-400 text-6xl mb-4">🎯</div>
+                    <p className="text-gray-500 text-lg">Challenge details coming soon</p>
                   </div>
                 )}
               </div>
