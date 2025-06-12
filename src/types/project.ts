@@ -14,6 +14,66 @@ export interface Project {
   aiNarrative: string;
   notes: string;
   is_published?: boolean;
+  
+  // Enhanced case study fields
+  problemStatement?: string;
+  solutionApproach?: string;
+  userPersonas?: string[];
+  designProcess?: DesignProcessStep[];
+  results?: ProjectResult[];
+  challenges?: string[];
+  teamMembers?: TeamMember[];
+  projectDuration?: string;
+  clientTestimonial?: ClientTestimonial;
+  beforeAfterImages?: BeforeAfterImage[];
+  prototypeUrl?: string;
+  galleryImages?: string[];
+  keyFeatures?: string[];
+  userJourney?: string;
+  designSystem?: DesignSystemInfo;
+}
+
+export interface DesignProcessStep {
+  title: string;
+  description: string;
+  duration?: string;
+  deliverables?: string[];
+  image?: string;
+}
+
+export interface ProjectResult {
+  metric: string;
+  value: string;
+  description?: string;
+  improvement?: string;
+}
+
+export interface TeamMember {
+  name: string;
+  role: string;
+  avatar?: string;
+}
+
+export interface ClientTestimonial {
+  quote: string;
+  author: string;
+  position: string;
+  company: string;
+  avatar?: string;
+  rating?: number;
+}
+
+export interface BeforeAfterImage {
+  before: string;
+  after: string;
+  caption?: string;
+}
+
+export interface DesignSystemInfo {
+  colors?: string[];
+  typography?: string[];
+  components?: string[];
+  description?: string;
 }
 
 export interface ProjectData {
@@ -30,6 +90,23 @@ export interface ProjectData {
   url: string;
   publishedDate: string;
   is_published: boolean;
+  
+  // Enhanced case study fields
+  problemStatement?: string;
+  solutionApproach?: string;
+  userPersonas?: string[];
+  designProcess?: DesignProcessStep[];
+  results?: ProjectResult[];
+  challenges?: string[];
+  teamMembers?: TeamMember[];
+  projectDuration?: string;
+  clientTestimonial?: ClientTestimonial;
+  beforeAfterImages?: BeforeAfterImage[];
+  prototypeUrl?: string;
+  galleryImages?: string[];
+  keyFeatures?: string[];
+  userJourney?: string;
+  designSystem?: DesignSystemInfo;
 }
 
 // Updated database structure to properly handle JSON metadata

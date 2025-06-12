@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { ExternalLink, Calendar, Users, TrendingUp } from "lucide-react";
+import { ExternalLink, Calendar, Users, TrendingUp, Clock, Star } from "lucide-react";
 import { Project } from "@/types/project";
 
 interface ProjectCardProps {
@@ -72,44 +72,66 @@ const ProjectCard = ({ project, onClick, featured = false }: ProjectCardProps) =
       
       {/* Enhanced Content Section */}
       <div className="p-6">
-        {/* Project Title & Type */}
+        {/* Project Title & Meta Info */}
         <div className="mb-4">
           <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-rose-600 transition-colors duration-300">
             {project.title}
           </h3>
-          <div className="flex items-center text-sm text-slate-500 mb-3">
-            <Calendar className="w-4 h-4 mr-1" />
-            {new Date(project.publishedDate).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long'
-            })}
+          <div className="flex items-center justify-between text-sm text-slate-500 mb-3">
+            <div className="flex items-center">
+              <Calendar className="w-4 h-4 mr-1" />
+              {new Date(project.publishedDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long'
+              })}
+            </div>
+            {project.projectDuration && (
+              <div className="flex items-center">
+                <Clock className="w-4 h-4 mr-1" />
+                {project.projectDuration}
+              </div>
+            )}
           </div>
         </div>
         
-        {/* Project Description - Case Study Style */}
+        {/* Project Description */}
         <div className="mb-4">
           <p className="text-slate-600 mb-3 line-clamp-3 leading-relaxed">
             {project.description}
           </p>
         </div>
 
-        {/* Key Metrics/Results Placeholder */}
-        <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
-          <div className="text-center">
-            <div className="flex items-center justify-center text-green-600 mb-1">
-              <TrendingUp className="w-4 h-4 mr-1" />
-              <span className="text-sm font-semibold">Success</span>
-            </div>
-            <div className="text-xs text-slate-500">Delivered</div>
+        {/* Key Results Preview */}
+        {project.results && project.results.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
+            {project.results.slice(0, 2).map((result, index) => (
+              <div key={index} className="text-center">
+                <div className="flex items-center justify-center text-green-600 mb-1">
+                  <TrendingUp className="w-4 h-4 mr-1" />
+                  <span className="text-sm font-semibold">{result.value}</span>
+                </div>
+                <div className="text-xs text-slate-500 truncate">{result.metric}</div>
+              </div>
+            ))}
           </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center text-blue-600 mb-1">
-              <Users className="w-4 h-4 mr-1" />
-              <span className="text-sm font-semibold">Client</span>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
+            <div className="text-center">
+              <div className="flex items-center justify-center text-green-600 mb-1">
+                <TrendingUp className="w-4 h-4 mr-1" />
+                <span className="text-sm font-semibold">Success</span>
+              </div>
+              <div className="text-xs text-slate-500">Delivered</div>
             </div>
-            <div className="text-xs text-slate-500">Satisfied</div>
+            <div className="text-center">
+              <div className="flex items-center justify-center text-blue-600 mb-1">
+                <Users className="w-4 h-4 mr-1" />
+                <span className="text-sm font-semibold">Client</span>
+              </div>
+              <div className="text-xs text-slate-500">Satisfied</div>
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Technology Stack */}
         <div className="mb-4">
@@ -130,11 +152,18 @@ const ProjectCard = ({ project, onClick, featured = false }: ProjectCardProps) =
           </div>
         </div>
         
-        {/* Call to Action */}
+        {/* Enhanced Call to Action */}
         <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-          <span className="text-sm text-slate-500 font-medium">
-            bunisystems.com
-          </span>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-slate-500 font-medium">bunisystems.com</span>
+            {project.clientTestimonial?.rating && (
+              <div className="flex items-center">
+                {[...Array(Math.min(5, Math.floor(project.clientTestimonial.rating)))].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
+                ))}
+              </div>
+            )}
+          </div>
           
           <span className="text-rose-500 font-semibold group-hover:text-rose-600 transition-colors duration-300 flex items-center">
             View Case Study 
