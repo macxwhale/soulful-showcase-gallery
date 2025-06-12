@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { X, Link as LinkIcon, Star, Users, Clock, Award, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Link as LinkIcon, Star, Users, Clock, Award, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { Project } from "@/types/project";
 import ImageGallery from "@/components/ImageGallery";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
